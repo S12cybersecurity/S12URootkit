@@ -130,6 +130,7 @@
     <ClCompile Include="UserMode-Rootkit.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="IPCObjects.h" />
     <ClInclude Include="multiDLLInjector.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
