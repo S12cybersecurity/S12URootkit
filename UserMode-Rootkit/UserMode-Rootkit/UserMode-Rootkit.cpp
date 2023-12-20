@@ -16,10 +16,20 @@ int main(int argc, char* argv[]){
 
     Serialitzator serialitzator("ipcObject");
 
-    vector<string> stringsToSerialize = { "Hola", "Mundo", "C++", "asdsad"};
-    serialitzator.serializeVectorString(stringsToSerialize,"serialized");
+    vector<wchar_t*> stringsToSerialize;
+    wstring str1 = L"explorer.exe";
+    wstring str2 = L"notepad.exe";
+    wstring str3 = L"cmd.exe";
+    stringsToSerialize.push_back((wchar_t*)str1.c_str());
+    stringsToSerialize.push_back((wchar_t*)str2.c_str());
+    stringsToSerialize.push_back((wchar_t*)str3.c_str());
 
-    vector<string> deserializedStrings = serialitzator.deserializeStringVector("serialized");
+    serialitzator.serializeVectorWCharTPointer(stringsToSerialize,L"agentMapped");
+    
+    /*vector<wchar_t*> deserializedStrings = serialitzator.deserializeWCharTPointerVector(L"agentMapped");
+    for (auto& str : deserializedStrings) {
+		wcout << str << endl;
+	}*/
 
     getchar();
 

@@ -1,8 +1,10 @@
 ﻿  UserMode-Rootkit.cpp
 S:\MalwareDeveloped\S12URootkit\UserMode-Rootkit\UserMode-Rootkit\IPCObjects.h(82,118): warning C4267: 'argument': conversion from 'size_t' to 'DWORD', possible loss of data
+S:\MalwareDeveloped\S12URootkit\UserMode-Rootkit\UserMode-Rootkit\IPCObjects.h(122,121): warning C4267: 'argument': conversion from 'size_t' to 'DWORD', possible loss of data
+S:\MalwareDeveloped\S12URootkit\UserMode-Rootkit\UserMode-Rootkit\IPCObjects.h(165,121): warning C4267: 'argument': conversion from 'size_t' to 'DWORD', possible loss of data
   Generating code
-  16 of 260 functions ( 6.2%) were compiled, the rest were copied from previous compilation.
-    2 functions were new in current compilation
-    7 functions had inline decision re-evaluated but remain unchanged
+  1 of 244 functions ( 0.4%) were compiled, the rest were copied from previous compilation.
+    0 functions were new in current compilation
+    0 functions had inline decision re-evaluated but remain unchanged
   Finished generating code
   UserMode-Rootkit.vcxproj -> S:\MalwareDeveloped\S12URootkit\UserMode-Rootkit\x64\Release\UserMode-Rootkit.exe

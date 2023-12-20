@@ -110,5 +110,99 @@ public:
         return deserializedData;
     }
 
+    int serializeVectorWString(const std::vector<std::wstring>& wstrings, std::wstring fileName) {
+        std::wstring serializedData;
+        for (size_t i = 0; i < wstrings.size(); ++i) {
+            serializedData += wstrings[i];
+            if (i < wstrings.size() - 1) {
+                serializedData += L',';
+            }
+        }
+
+        HANDLE fileMapping = CreateFileMappingW(INVALID_HANDLE_VALUE, nullptr, PAGE_READWRITE, 0, serializedData.size() * sizeof(wchar_t), fileName.c_str());
+        LPVOID mappedView = MapViewOfFile(fileMapping, FILE_MAP_WRITE, 0, 0, 0);
+        memcpy(mappedView, serializedData.data(), serializedData.size() * sizeof(wchar_t));
+        return 0;
+    }
+
+    std::vector<std::wstring> deserializeWStringVector(std::wstring fileName) {
+        HANDLE fileMapping = OpenFileMappingW(FILE_MAP_READ, FALSE, fileName.c_str());
+
+        LPVOID mappedView = MapViewOfFile(fileMapping, FILE_MAP_READ, 0, 0, 0);
+
+        std::wstring serializedData(static_cast<const wchar_t*>(mappedView));
+
+        std::vector<std::wstring> deserializedData;
+        size_t pos = 0;
+        std::wstring token;
+        while ((pos = serializedData.find(L',')) != std::wstring::npos) {
+            token = serializedData.substr(0, pos);
+            deserializedData.push_back(token);
+            serializedData.erase(0, pos + 1);
+        }
+
+        if (!serializedData.empty()) {
+            deserializedData.push_back(serializedData);
+        }
+
+        return deserializedData;
+    }
+
+    int serializeVectorWCharTPointer(const std::vector<wchar_t*>& wcharPtrs, std::wstring fileName) {
+        // Convertir wchar_t* a std::wstring y concatenar
+        std::wstring serializedData;
+        for (size_t i = 0; i < wcharPtrs.size(); ++i) {
+            if (wcharPtrs[i] != nullptr) {
+                serializedData += wcharPtrs[i];
+            }
+
+            if (i < wcharPtrs.size() - 1) {
+                serializedData += L',';
+            }
+        }
+
+        // Crear el archivo mapeado
+        HANDLE fileMapping = CreateFileMappingW(INVALID_HANDLE_VALUE, nullptr, PAGE_READWRITE, 0, serializedData.size() * sizeof(wchar_t), fileName.c_str());
+        LPVOID mappedView = MapViewOfFile(fileMapping, FILE_MAP_WRITE, 0, 0, 0);
+
+        // Copiar datos a la memoria mapeada
+        memcpy(mappedView, serializedData.data(), serializedData.size() * sizeof(wchar_t));
+
+        return 0;
+    }
+
+    // Función para deserializar un vector de wchar_t*
+    std::vector<wchar_t*> deserializeWCharTPointerVector(std::wstring fileName) {
+        // Abrir el archivo mapeado
+        HANDLE fileMapping = OpenFileMappingW(FILE_MAP_READ, FALSE, fileName.c_str());
+        LPVOID mappedView = MapViewOfFile(fileMapping, FILE_MAP_READ, 0, 0, 0);
+
+        // Obtener los datos serializados
+        std::wstring serializedData(static_cast<const wchar_t*>(mappedView));
+
+        // Convertir std::wstring de nuevo a wchar_t*
+        std::vector<wchar_t*> deserializedData;
+        size_t pos = 0;
+        wchar_t* token;
+        while ((pos = serializedData.find(L',')) != std::wstring::npos) {
+            token = new wchar_t[pos + 1];
+            wcsncpy(token, serializedData.c_str(), pos);
+            token[pos] = L'\0';
+            deserializedData.push_back(token);
+            serializedData.erase(0, pos + 1);
+        }
+
+        if (!serializedData.empty()) {
+            token = new wchar_t[serializedData.size() + 1];
+            wcsncpy(token, serializedData.c_str(), serializedData.size());
+            token[serializedData.size()] = L'\0';
+            deserializedData.push_back(token);
+        }
+
+        return deserializedData;
+    }
+
+
+
 
 };
