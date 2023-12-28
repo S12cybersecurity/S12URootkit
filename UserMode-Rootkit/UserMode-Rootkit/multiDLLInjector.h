@@ -27,9 +27,25 @@ bool injectDLL(string dllPath, int pid) {
 	char* dllPathChar = new char[dllPath.length() + 1];
 	strcpy_s(dllPathChar, dllPath.length() + 1, dllPath.c_str());
 	dllPathChar[dllPath.length()] = '\0';
+
+	// Found only DLL name (without path) using last path part then of last  \\ 
+	char* dllName = strrchr(dllPathChar, '\\');
+	// Check if the DLL is already injected
+	HANDLE hSnap = CreateToolhelp32Snapshot(TH32CS_SNAPMODULE, pid);
+	MODULEENTRY32W me32;
+	me32.dwSize = sizeof(MODULEENTRY32W);
+	if (Module32FirstW(hSnap, &me32) != FALSE) {
+		while (Module32NextW(hSnap, &me32) != FALSE) {
+			if (wcscmp(me32.szModule, (wstring(dllPathChar, dllPathChar + strlen(dllPathChar))).c_str()) == 0) {
+				cout << "DLL already injected" << endl;
+				return false;
+			}
+		}
+	}
+
 	HANDLE hProc = OpenProcess(PROCESS_ALL_ACCESS, FALSE, pid);
 	if (hProc == NULL) {
-		cout << "OpenProcess failed" << endl;
+		cout << "OpenProcess failed: " << GetLastError() << endl;
 		return false;
 	}
 	LPVOID LoadLibAddr = (LPVOID)GetProcAddress(GetModuleHandleA("kernel32.dll"), "LoadLibraryA");
@@ -54,6 +70,7 @@ bool injectDLL(string dllPath, int pid) {
 	CloseHandle(hProc);
 	CloseHandle(hThread);
 	
+	cout << "DLL injected" << endl;
 	return true;
 
 }

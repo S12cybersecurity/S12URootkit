@@ -1,0 +1,4 @@
+﻿  pch.cpp
+  dllmain.cpp
+S:\MalwareDeveloped\S12URootkit\fileHooks\fileHooks\dllmain.cpp(85,13): error C3861: 'StrStrIW': identifier not found
+S:\MalwareDeveloped\S12URootkit\fileHooks\fileHooks\dllmain.cpp(101,13): error C3861: 'StrStrIW': identifier not found

