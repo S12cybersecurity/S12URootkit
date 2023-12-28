@@ -4,6 +4,6 @@ S:\MalwareDeveloped\S12URootkit\UserMode-Rootkit\UserMode-Rootkit\IPCObjects.h(1
 S:\MalwareDeveloped\S12URootkit\UserMode-Rootkit\UserMode-Rootkit\IPCObjects.h(165,121): warning C4267: 'argument': conversion from 'size_t' to 'DWORD', possible loss of data
   Generating code
   Previous IPDB not found, fall back to full compilation.
-  All 535 functions were compiled because no usable IPDB/IOBJ from previous compilation was found.
+  All 572 functions were compiled because no usable IPDB/IOBJ from previous compilation was found.
   Finished generating code
   UserMode-Rootkit.vcxproj -> S:\MalwareDeveloped\S12URootkit\UserMode-Rootkit\x64\Release\UserMode-Rootkit.exe
