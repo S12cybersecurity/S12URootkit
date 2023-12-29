@@ -62,9 +62,7 @@ std::vector<std::wstring> deserializeWStringVector(std::wstring fileName) {
 }
 
 NTSTATUS NTAPI HookedNtQueryDirectoryFile(HANDLE FileHandle, HANDLE Event, PIO_APC_ROUTINE ApcRoutine, LPVOID ApcContext, PIO_STATUS_BLOCK IoStatusBlock, LPVOID FileInformation, ULONG Length, FILE_INFORMATION_CLASS FileInformationClass, BOOLEAN ReturnSingleEntry, PUNICODE_STRING FileName, BOOLEAN RestartScan) {
-    vector<wstring> hiddenPaths;
-    hiddenPaths = deserializeWStringVector(L"pathMapped");
-
+    vector<wstring> hiddenPaths = deserializeWStringVector(L"pathMapped");
     NTSTATUS status = STATUS_NO_MORE_FILES;
     WCHAR dirPath[MAX_PATH + 1] = { 0 };
 
@@ -84,8 +82,7 @@ NTSTATUS NTAPI HookedNtQueryDirectoryFile(HANDLE FileHandle, HANDLE Event, PIO_A
 
 
 NTSTATUS NTAPI HookedNtQueryDirectoryFileEx(HANDLE FileHandle, HANDLE Event, PIO_APC_ROUTINE ApcRoutine, PVOID ApcContext, PIO_STATUS_BLOCK IoStatusBlock, PVOID FileInformation, ULONG Length, FILE_INFORMATION_CLASS FileInformationClass, ULONG QueryFlags, PUNICODE_STRING FileName) {
-    vector<wstring> hiddenPaths = { L"C:\\Users\\Public\\Music", L"C:\\Users\\Public\\Pictures" };
-    OutputDebugString(L"HookedNtQueryDirectoryFileEx");
+    vector<wstring> hiddenPaths = deserializeWStringVector(L"pathMapped");
     NTSTATUS status = STATUS_NO_MORE_FILES;
     WCHAR dirPath[MAX_PATH + 1] = { 0 };
 

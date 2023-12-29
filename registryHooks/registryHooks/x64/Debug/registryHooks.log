@@ -1,3 +1,6 @@
-﻿  pch.cpp
+﻿C:\Program Files\Microsoft Visual Studio\2022\Community\MSBuild\Microsoft\VC\v170\Microsoft.CppClean.targets(77,5): warning : Access to the path 's:\malwaredeveloped\s12urootkit\registryhooks\x64\debug\registryhooks.dll' is denied.
+  pch.cpp
   dllmain.cpp
-  registryHooks.vcxproj -> S:\MalwareDeveloped\S12URootkit\registryHooks\x64\Debug\registryHooks.dll
+S:\MalwareDeveloped\S12URootkit\registryHooks\registryHooks\dllmain.cpp(14,1): warning C4005: 'UNICODE': macro redefinition
+S:\MalwareDeveloped\S12URootkit\registryHooks\registryHooks\dllmain.cpp(14,1): message : 'UNICODE' previously declared on the command line
+LINK : fatal error LNK1105: cannot close file 'S:\MalwareDeveloped\S12URootkit\registryHooks\x64\Debug\registryHooks.dll'; error code 1224
