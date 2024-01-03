@@ -198,7 +198,6 @@ public:
             token[serializedData.size()] = L'\0';
             deserializedData.push_back(token);
         }
-
         return deserializedData;
     }
 
