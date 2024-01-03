@@ -26,5 +26,8 @@
     <ClInclude Include="IPCObjects.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="newProcessMonitor.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

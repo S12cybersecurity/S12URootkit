@@ -1,0 +1,9 @@
+﻿  UserModeR00tkit.cpp
+S:\MalwareDeveloped\S12URootkit\UserModeR00tkit\UserModeR00tkit\IPCObjects.h(82,118): warning C4267: 'argument': conversion from 'size_t' to 'DWORD', possible loss of data
+S:\MalwareDeveloped\S12URootkit\UserModeR00tkit\UserModeR00tkit\IPCObjects.h(122,121): warning C4267: 'argument': conversion from 'size_t' to 'DWORD', possible loss of data
+S:\MalwareDeveloped\S12URootkit\UserModeR00tkit\UserModeR00tkit\IPCObjects.h(165,121): warning C4267: 'argument': conversion from 'size_t' to 'DWORD', possible loss of data
+  Generating code
+  Previous IPDB not found, fall back to full compilation.
+  All 622 functions were compiled because no usable IPDB/IOBJ from previous compilation was found.
+  Finished generating code
+  UserModeR00tkit.vcxproj -> S:\MalwareDeveloped\S12URootkit\UserModeR00tkit\x64\Release\UserModeR00tkit.exe

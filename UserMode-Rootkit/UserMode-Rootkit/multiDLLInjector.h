@@ -1,5 +1,3 @@
-#include <Windows.h>
-#include <iostream>
 #include <vector>
 #include <TlHelp32.h>
 #include <unordered_map>
@@ -69,10 +67,7 @@ bool injectDLL(string dllPath, int pid) {
 	}
 	CloseHandle(hProc);
 	CloseHandle(hThread);
-	
-	cout << "DLL injected" << endl;
 	return true;
-
 }
 
 int injectDlls(unordered_map <string, vector<string>> injectionMap) {
