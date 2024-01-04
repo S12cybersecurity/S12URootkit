@@ -39,6 +39,9 @@
     <ClInclude Include="persistence.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="isProcessRunning.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="UserModeR00tkit.cpp">

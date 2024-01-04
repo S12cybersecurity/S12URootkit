@@ -2,6 +2,6 @@
   dllmain.cpp
   Generating code
   Previous IPDB not found, fall back to full compilation.
-  All 162 functions were compiled because no usable IPDB/IOBJ from previous compilation was found.
+  All 158 functions were compiled because no usable IPDB/IOBJ from previous compilation was found.
   Finished generating code
   fileHooks.vcxproj -> S:\MalwareDeveloped\S12URootkit\fileHooks\x64\Release\fileHooks.dll

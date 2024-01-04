@@ -10,10 +10,7 @@
 
 using namespace std;
 
-#define HIDE_REG L"$$hide"
 #define UNICODE
-
-std::vector<std::wstring> HIDE_REGS = { L"$$hide", L"hide"};
 
 NtEnumerateKey_t origNtEnumerateKey = NULL;
 NtEnumerateValueKey_t origNtEnumerateValueKey = NULL;

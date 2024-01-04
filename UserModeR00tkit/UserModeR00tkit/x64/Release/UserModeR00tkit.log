@@ -2,14 +2,14 @@
 S:\MalwareDeveloped\S12URootkit\UserModeR00tkit\UserModeR00tkit\IPCObjects.h(82,118): warning C4267: 'argument': conversion from 'size_t' to 'DWORD', possible loss of data
 S:\MalwareDeveloped\S12URootkit\UserModeR00tkit\UserModeR00tkit\IPCObjects.h(122,121): warning C4267: 'argument': conversion from 'size_t' to 'DWORD', possible loss of data
 S:\MalwareDeveloped\S12URootkit\UserModeR00tkit\UserModeR00tkit\IPCObjects.h(165,121): warning C4267: 'argument': conversion from 'size_t' to 'DWORD', possible loss of data
-S:\MalwareDeveloped\S12URootkit\UserModeR00tkit\UserModeR00tkit\UserModeR00tkit.cpp(17,1): warning C4005: 'PROCESS_DLL': macro redefinition
+S:\MalwareDeveloped\S12URootkit\UserModeR00tkit\UserModeR00tkit\UserModeR00tkit.cpp(18,1): warning C4005: 'PROCESS_DLL': macro redefinition
 S:\MalwareDeveloped\S12URootkit\UserModeR00tkit\UserModeR00tkit\newProcessMonitor.h(8,1): message : see previous definition of 'PROCESS_DLL'
-S:\MalwareDeveloped\S12URootkit\UserModeR00tkit\UserModeR00tkit\UserModeR00tkit.cpp(18,1): warning C4005: 'PATH_DLL': macro redefinition
+S:\MalwareDeveloped\S12URootkit\UserModeR00tkit\UserModeR00tkit\UserModeR00tkit.cpp(19,1): warning C4005: 'PATH_DLL': macro redefinition
 S:\MalwareDeveloped\S12URootkit\UserModeR00tkit\UserModeR00tkit\newProcessMonitor.h(10,1): message : see previous definition of 'PATH_DLL'
-S:\MalwareDeveloped\S12URootkit\UserModeR00tkit\UserModeR00tkit\UserModeR00tkit.cpp(19,1): warning C4005: 'REGISTER_DLL': macro redefinition
+S:\MalwareDeveloped\S12URootkit\UserModeR00tkit\UserModeR00tkit\UserModeR00tkit.cpp(20,1): warning C4005: 'REGISTER_DLL': macro redefinition
 S:\MalwareDeveloped\S12URootkit\UserModeR00tkit\UserModeR00tkit\newProcessMonitor.h(11,1): message : see previous definition of 'REGISTER_DLL'
   Generating code
   Previous IPDB not found, fall back to full compilation.
-  All 606 functions were compiled because no usable IPDB/IOBJ from previous compilation was found.
+  All 614 functions were compiled because no usable IPDB/IOBJ from previous compilation was found.
   Finished generating code
   UserModeR00tkit.vcxproj -> S:\MalwareDeveloped\S12URootkit\UserModeR00tkit\x64\Release\UserModeR00tkit.exe

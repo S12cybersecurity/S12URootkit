@@ -1,9 +1,9 @@
 ﻿  pch.cpp
   dllmain.cpp
-S:\MalwareDeveloped\S12URootkit\registryHooks\registryHooks\dllmain.cpp(14,1): warning C4005: 'UNICODE': macro redefinition
-S:\MalwareDeveloped\S12URootkit\registryHooks\registryHooks\dllmain.cpp(14,1): message : 'UNICODE' previously declared on the command line
+S:\MalwareDeveloped\S12URootkit\registryHooks\registryHooks\dllmain.cpp(13,1): warning C4005: 'UNICODE': macro redefinition
+S:\MalwareDeveloped\S12URootkit\registryHooks\registryHooks\dllmain.cpp(13,1): message : 'UNICODE' previously declared on the command line
   Generating code
   Previous IPDB not found, fall back to full compilation.
-  All 173 functions were compiled because no usable IPDB/IOBJ from previous compilation was found.
+  All 155 functions were compiled because no usable IPDB/IOBJ from previous compilation was found.
   Finished generating code
   registryHooks.vcxproj -> S:\MalwareDeveloped\S12URootkit\registryHooks\x64\Release\registryHooks.dll

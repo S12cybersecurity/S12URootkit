@@ -131,6 +131,7 @@
   <ItemGroup>
     <ClInclude Include="framework.h" />
     <ClInclude Include="IPCObjects.h" />
+    <ClInclude Include="isProcessRunning.h" />
     <ClInclude Include="multiDLLInjector.h" />
     <ClInclude Include="newProcessMonitor.h" />
     <ClInclude Include="persistence.h" />
