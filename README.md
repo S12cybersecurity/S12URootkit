@@ -50,6 +50,10 @@ Evade Windows Defender:
   
 **Not detected in Execution Time! (4/1/2024)**
 
+Detected After restart!
+
+![image](https://github.com/S12cybersecurity/S12URootkit/assets/79543461/b1be6632-ffae-4020-8469-0a6fc6389352)
+
 Evade Classic AV (BitDefender Free Version):
 
 - [x] Static Analysis:
