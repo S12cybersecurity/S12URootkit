@@ -15,10 +15,6 @@ https://youtu.be/CJ7oBdPjSvQ
 
 # Hide Process Video
 
-[ ! ] **In some machines the process hide feature only work after restart the machine once the base EXE are executed without arguments**
-
-[ ! ] **Some process are dont hide, if this occurs try executing first the process than the Task Manager**
-
 https://youtu.be/6yCC_IIjWTI
 
 # Hide Registry Video
