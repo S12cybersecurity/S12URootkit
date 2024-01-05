@@ -7,6 +7,19 @@ Undetectable at the moment in Windows Defender and BitDefender Free Version Anti
 
 [ ! ] **Before execute commands to hide some values, if in this victim machine never is executed this binary execute first the UserModeR00tkit.exe without arguments of the command**
 
+[ ! ] **In some machines the process hide feature only work after restart the machine once the base EXE are executed without arguments**
+
+# Hide Files & Directories Video
+
+# Hide Process Video
+
+[ ! ] **In some machines the process hide feature only work after restart the machine once the base EXE are executed without arguments**
+
+[ ! ] **Some process are dont hide, if this occurs try executing first the process than the Task Manager**
+
+# Hide Registry Video
+
+
 # Features
 
 Process:
