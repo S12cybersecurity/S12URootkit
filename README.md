@@ -7,6 +7,18 @@ Undetectable at the moment in Windows Defender and BitDefender Free Version Anti
 
 [ ! ] **Before execute commands to hide some values, if in this victim machine never is executed this binary execute first the UserModeR00tkit.exe without arguments of the command**
 
+# Usage
+
+**To use this tool, if it's the first time executed in this machine automatically created the persistence and all the needed for following scenarios, but before start hiding values using the rootkit commands, you need to execute first the UserModeR00tkit.exe without arguments of the command**
+
+Commands (as Administrator):
+
+- UserModeR00tkit.exe
+
+- UserModeR00tkit.exe ... hide ...
+
+(replace the ...) with the values that you want)
+
 # Article
 
 https://medium.com/@s12deff/user-mode-windows-rootkit-98e4eada4949
