@@ -7,6 +7,10 @@ Undetectable at the moment in Windows Defender and BitDefender Free Version Anti
 
 [ ! ] **Before execute commands to hide some values, if in this victim machine never is executed this binary execute first the UserModeR00tkit.exe without arguments of the command**
 
+# Article
+
+https://medium.com/@s12deff/user-mode-windows-rootkit-98e4eada4949
+
 # Hide Files & Directories Video
 
 https://youtu.be/CJ7oBdPjSvQ
