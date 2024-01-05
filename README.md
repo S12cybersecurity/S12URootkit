@@ -1,5 +1,43 @@
 # S12URootkit
-User Mode Windows Rootkit
+User Mode Windows Rootkit able to hide **Processes, Files, Directories, Registry Key, Registry Value**.
+
+Undetectable at the moment in Windows Defender and BitDefender Free Version Antivirus s
+
+[ ! ] **You need Administrator Privileges!**
+
+[ ! ] **Before execute commands to hide some values, if in this victim machine never is executed this binary execute first the UserModeR00tkit.exe without arguments of the command**
+
+# Features
+
+Process:
+
+- Hide Processes in Task Manager
+
+Files & Directories:
+        
+- Hide Files & Directories in File Explorer (explorer.exe)
+
+Registry:
+        
+- Registries and Values in regedit.exe
+
+![image](https://github.com/S12cybersecurity/S12URootkit/assets/79543461/31e9c6f6-d5c2-465a-b04b-e729522394ec)
+
+# Commands
+
+Process:
+
+- rootkit.exe process hide processname.exe
+
+Path:
+      
+- rootkit.exe path hide C:\Users\Public\Music
+
+Registry:
+      
+- rootkit.exe registry hide valuetohide
+
+![image](https://github.com/S12cybersecurity/S12URootkit/assets/79543461/41f21755-5027-48cb-803f-64d0493b48c4)
 
 # Detection
 
