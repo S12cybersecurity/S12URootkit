@@ -1,0 +1,12 @@
+﻿  dllmain.cpp
+C:\Users\s12de\Documents\Github\malwaredeveloped\S12URootkit\S12URootkit\registryHooks\registryHooks\dllmain.cpp(13,9): warning C4005: 'UNICODE': macro redefinition
+  (compiling source file '/dllmain.cpp')
+      C:\Users\s12de\Documents\Github\malwaredeveloped\S12URootkit\S12URootkit\registryHooks\registryHooks\dllmain.cpp(13,9):
+      'UNICODE' previously declared on the command line
+  
+  Generating code
+  18 of 171 functions (10.5%) were compiled, the rest were copied from previous compilation.
+    12 functions were new in current compilation
+    24 functions had inline decision re-evaluated but remain unchanged
+  Finished generating code
+  registryHooks.vcxproj -> C:\Users\s12de\Documents\Github\malwaredeveloped\S12URootkit\S12URootkit\registryHooks\x64\Release\registryHooks.dll
